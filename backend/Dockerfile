@@ -1,6 +1,6 @@
 # Multi-stage build for smaller production image
 # Stage 1: Build
-FROM openjdk:21-jdk-slim AS builder
+FROM eclipse-temurin:21-jdk-alpine AS builder
 
 WORKDIR /app
 
@@ -22,12 +22,15 @@ COPY src ./src
 RUN ./mvnw clean package -DskipTests -B
 
 # Stage 2: Runtime
-FROM openjdk:21-jre-slim
+FROM eclipse-temurin:21-jre-alpine
 
 # Add non-root user for security
-RUN groupadd -r spring && useradd -r -g spring spring
+RUN addgroup -S spring && adduser -S spring -G spring
 
 WORKDIR /app
+
+# Install curl for health checks
+RUN apk add --no-cache curl
 
 # Copy only the built jar from builder stage
 COPY --from=builder /app/target/tracker-0.0.1-SNAPSHOT.jar app.jar

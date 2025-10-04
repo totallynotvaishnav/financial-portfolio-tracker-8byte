@@ -4,6 +4,7 @@ import { Portfolio, Transaction } from '../types';
 import apiService from '../services/apiService';
 import PortfolioDetailView from './portfolio/PortfolioDetailView';
 import AIInsightsCard from './ai/AIInsightsCard';
+import Loader, { ButtonLoader } from './Loader';
 
 const MenuIcon = () => (
   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -801,6 +802,11 @@ const Dashboard: React.FC = () => {
     );
   };
 
+  // Show loading state while initial data is being fetched
+  if (loading) {
+    return <Loader fullScreen text="Loading your portfolios..." />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
       <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
@@ -1215,7 +1221,7 @@ const Dashboard: React.FC = () => {
                                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 flex items-center min-w-[80px] justify-center"
                               >
                                 {createPortfolioLoading ? (
-                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                  <ButtonLoader text="" />
                                 ) : (
                                   'Create'
                                 )}
@@ -1268,7 +1274,7 @@ const Dashboard: React.FC = () => {
                                         className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 text-sm flex items-center min-w-[60px] justify-center"
                                       >
                                         {updatePortfolioLoading ? (
-                                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                                          <ButtonLoader text="" />
                                         ) : (
                                           'Save'
                                         )}
@@ -1408,10 +1414,7 @@ const Dashboard: React.FC = () => {
                               className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400"
                             >
                               {addStockLoading ? (
-                                <>
-                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                  Adding...
-                                </>
+                                <ButtonLoader text="Adding..." />
                               ) : (
                                 'Add Asset'
                               )}
@@ -1528,7 +1531,7 @@ const Dashboard: React.FC = () => {
                   disabled={deletePortfolioLoading}
                 >
                   {deletePortfolioLoading ? (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <ButtonLoader text="Deleting..." />
                   ) : (
                     'Delete Portfolio'
                   )}

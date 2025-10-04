@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import AuthPage from './pages/AuthPage';
 import Dashboard from './components/Dashboard';
+import Loader from './components/Loader';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -12,7 +13,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader fullScreen text="Authenticating..." />;
   }
 
   return user ? <>{children}</> : <Navigate to="/login" replace />;
@@ -22,7 +23,7 @@ const PublicRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader fullScreen text="Loading..." />;
   }
 
   return !user ? <>{children}</> : <Navigate to="/dashboard" replace />;

@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: portfolio_postgres_dev
+    environment:
+      POSTGRES_DB: portfolio_tracker
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - portfolio_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: portfolio_backend_dev
+    ports:
+      - "8000:8000"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: portfolio_tracker
+      DB_USERNAME: postgres
+      DB_PASSWORD: password
+      JWT_SECRET: dev-secret-key-do-not-use-in-production-minimum-256-bits-required
+      ALPHAVANTAGE_API_KEY: ${ALPHAVANTAGE_API_KEY:-demo}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - portfolio_network
+    volumes:
+      - ./backend/src:/app/src
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  postgres_data:
+
+networks:
+  portfolio_network:
+    driver: bridge

@@ -1,0 +1,35 @@
+[build]
+  # Build command
+  command = "npm install && npm run build:prod"
+  
+  # Directory with the production build
+  publish = "build"
+  
+  # Base directory (frontend folder)
+  base = "frontend"
+
+[build.environment]
+  # Node version
+  NODE_VERSION = "20"
+
+[[redirects]]
+  # Redirect all routes to index.html for React Router
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  # Apply security headers to all routes
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+[[headers]]
+  # Cache static assets for 1 year
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
